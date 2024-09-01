@@ -1,7 +1,7 @@
 import os
 import numpy as np
 import tensorflow as tf
-from tensorflow.keras import layers, models
+from keras._tf_keras.keras import layers, models
 from PIL import Image
 
 def load_images_from_folder(folder):
@@ -26,7 +26,8 @@ def main():
     train_images, test_images = train_images / 255.0, test_images / 255.0
     
     model = models.Sequential([
-        layers.Flatten(input_shape=(28, 28)),
+        layers.Input(shape=(28, 28)),
+        layers.Flatten(),
         layers.Dense(128, activation='relu'),
         layers.Dense(10)
     ])
@@ -38,10 +39,11 @@ def main():
     model.fit(train_images, train_labels, epochs=10)
     
     test_loss, test_acc = model.evaluate(test_images, test_labels, verbose=2)
-    print(f'\nTest accuracy: {test_acc}')
+    print(f'\nTest accuracy: {test_acc:.4f}')
+    print(f'Test loss: {test_loss:.4f}')
     
-    model.save('model.h5')
-    print('Model saved to model.h5')
+    model.save('model.keras')
+    print('Model saved to model.keras')
 
 if __name__ == "__main__":
     main()

@@ -19,7 +19,7 @@ def download_images_from_s3(bucket_name, download_folder):
 
 def read_mnist_images(file_path):
     with open(file_path, 'rb') as f:
-        magic = int.from_bytes(f.read(4), 'big')
+        f.read(4) 
         num_images = int.from_bytes(f.read(4), 'big')
         rows = int.from_bytes(f.read(4), 'big')
         cols = int.from_bytes(f.read(4), 'big')
@@ -28,8 +28,7 @@ def read_mnist_images(file_path):
 
 def read_mnist_labels(file_path):
     with open(file_path, 'rb') as f:
-        magic = int.from_bytes(f.read(4), 'big')
-        num_labels = int.from_bytes(f.read(4), 'big')
+        f.read(8)  
         labels = np.frombuffer(f.read(), dtype=np.uint8)
     return labels
 
