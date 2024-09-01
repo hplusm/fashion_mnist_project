@@ -116,19 +116,3 @@ Ensure you have the following installed:
    0 0 * * * /usr/bin/python3 /path_to_your_repo/batch_prediction/batch_predict.py
    ```
 
-## Checking Labels
-
-1. **Check Labels**:
-   Use the following script to check the labels in your dataset:
-   ```python
-   import os
-   from data_processing.process import read_mnist_labels
-
-   def check_labels(file_path):
-       labels = read_mnist_labels(file_path)
-       print("Labels:", labels)
-
-   if __name__ == "__main__":
-       file_path = 'data/downloaded/train-labels-idx1-ubyte'
-       check_labels(file_path)
-   ```
