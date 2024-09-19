@@ -7,6 +7,15 @@ import mlflow
 import mlflow.keras
 
 def load_images_from_folder(folder):
+    """
+    Load and preprocess images from a folder.
+    
+    Args:
+        folder (str): Path to the folder containing image files.
+    
+    Returns:
+        tuple: Numpy arrays of images and corresponding labels.
+    """
     images = []
     labels = []
     for filename in os.listdir(folder):
@@ -19,17 +28,21 @@ def load_images_from_folder(folder):
     return np.array(images), np.array(labels)
 
 def main():
+    # Set up MLflow experiment
     mlflow.set_experiment("Fashion MNIST Classification")
     
     with mlflow.start_run() as run:
+        # Data Loading
         train_folder = 'data/processed/train'
         test_folder = 'data/processed/test'
         
         train_images, train_labels = load_images_from_folder(train_folder)
         test_images, test_labels = load_images_from_folder(test_folder)
         
+        # Data Preprocessing
         train_images, test_images = train_images / 255.0, test_images / 255.0
         
+        # Model Architecture
         model = models.Sequential([
             layers.Input(shape=(28, 28)),
             layers.Flatten(),
@@ -37,24 +50,31 @@ def main():
             layers.Dense(10)
         ])
         
+        # Model Compilation
         model.compile(optimizer='adam',
                       loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
                       metrics=['accuracy'])
         
+        # Model Training
         history = model.fit(train_images, train_labels, epochs=10)
         
+        # Log hyperparameters
         mlflow.log_param("epochs", 10)
         mlflow.log_param("optimizer", "adam")
         mlflow.log_param("loss", "sparse_categorical_crossentropy")
         
+        # Log training metrics
         mlflow.log_metric("train_accuracy", history.history['accuracy'][-1])
         mlflow.log_metric("train_loss", history.history['loss'][-1])
         
+        # Model Evaluation
         test_loss, test_acc = model.evaluate(test_images, test_labels, verbose=2)
         
+        # Log evaluation metrics
         mlflow.log_metric("test_accuracy", test_acc)
         mlflow.log_metric("test_loss", test_loss)
         
+        # Model Serialization
         mlflow.keras.log_model(model, "model")
         
         # Log the run ID
