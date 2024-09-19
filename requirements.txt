@@ -4,3 +4,4 @@ tensorflow
 flask
 requests
 numpy
+mlflow
