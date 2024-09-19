@@ -1,33 +1,83 @@
+import os
 import mlflow
 import mlflow.keras
 from flask import Flask, request, jsonify
 import numpy as np
 from PIL import Image
 import io
+import requests
 
 app = Flask(__name__)
 
 # Model Configuration
-mlflow.set_tracking_uri("http://localhost:5000")  # MLflow tracking server URI
+mlflow_uri = "http://127.0.0.1:5000"
+mlflow.set_tracking_uri(mlflow_uri)
 experiment_name = "Fashion MNIST Classification"
-mlflow.set_experiment(experiment_name)
+
+# Check MLflow server
+try:
+    response = requests.get(mlflow_uri)
+    print(f"MLflow server status: {response.status_code}")
+except requests.ConnectionError:
+    print("MLflow server is not accessible")
+    exit(1)
+
+# Set up the experiment
+try:
+    mlflow.set_experiment(experiment_name)
+    print(f"Successfully set experiment: {experiment_name}")
+except Exception as e:
+    print(f"Error setting experiment: {e}")
+    exit(1)
 
 # Model Loading
-client = mlflow.tracking.MlflowClient()
-experiment = client.get_experiment_by_name(experiment_name)
-runs = client.search_runs(
-    experiment_ids=[experiment.experiment_id],
-    order_by=["attributes.start_time desc"],
-    max_results=1
-)
+try:
+    client = mlflow.tracking.MlflowClient()
+    experiment = client.get_experiment_by_name(experiment_name)
+    runs = client.search_runs(
+        experiment_ids=[experiment.experiment_id],
+        order_by=["attributes.start_time desc"],
+        max_results=1
+    )
 
-if runs:
-    latest_run = runs[0]
-    run_id = latest_run.info.run_id
-    model = mlflow.keras.load_model(f"runs:/{run_id}/model")
-    print(f"Loaded model from run: {run_id}")
-else:
-    raise Exception("No runs found for the experiment")
+    if runs:
+        latest_run = runs[0]
+        run_id = latest_run.info.run_id
+        print(f"Latest run ID: {run_id}")
+        
+        # Print the artifact URI
+        artifact_uri = mlflow.get_run(run_id).info.artifact_uri
+        print(f"Artifact URI: {artifact_uri}")
+        
+        # List contents of the artifact directory
+        artifact_dir = artifact_uri.replace("file://", "")
+        print(f"Contents of {artifact_dir}:")
+        for root, dirs, files in os.walk(artifact_dir):
+            level = root.replace(artifact_dir, '').count(os.sep)
+            indent = ' ' * 4 * (level)
+            print(f"{indent}{os.path.basename(root)}/")
+            subindent = ' ' * 4 * (level + 1)
+            for f in files:
+                print(f"{subindent}{f}")
+        
+        # Try to load the model
+        try:
+            model = mlflow.keras.load_model(f"runs:/{run_id}/model")
+            print(f"Loaded model from run: {run_id}")
+        except Exception as model_load_error:
+            print(f"Error loading model: {model_load_error}")
+            print("Attempting to load from artifact URI directly...")
+            model_path = os.path.join(artifact_dir, "model")
+            if os.path.exists(model_path):
+                model = mlflow.keras.load_model(model_path)
+                print("Successfully loaded model from artifact URI")
+            else:
+                print(f"Model directory not found at {model_path}")
+    else:
+        raise Exception("No runs found for the experiment")
+except Exception as e:
+    print(f"Error in model loading process: {e}")
+    exit(1)
 
 def preprocess_image(file):
     """
