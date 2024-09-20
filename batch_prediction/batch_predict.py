@@ -32,5 +32,5 @@ def batch_predict(image_folder, api_url):
 if __name__ == "__main__":
     # Configuration for batch prediction
     image_folder = 'data/processed/test'  # Folder containing new images
-    api_url = 'http://127.0.0.1:5000/predict'  # URL of the prediction API
+    api_url = 'http://127.0.0.1:5001/predict'  # URL of the prediction API
     batch_predict(image_folder, api_url)
