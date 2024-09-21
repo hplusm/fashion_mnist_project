@@ -6,6 +6,13 @@ import numpy as np
 from PIL import Image
 import io
 import requests
+import logging 
+import time 
+from collections import deque 
+from threading import Lock 
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
@@ -93,29 +100,77 @@ def preprocess_image(file):
     img_array = np.array(img) / 255.0
     return img_array.reshape(1, 28, 28)
 
+# Add these lines after app initialization  
+request_times = deque(maxlen=100)  # Store last 100 request times 
+request_lock = Lock() 
+
 @app.route('/predict', methods=['POST'])
 def predict():
-    """
-    Endpoint for making predictions on input images.
-    
-    Returns:
-        JSON response with predicted class.
-    """
+    start_time = time.time()
+    logger.info("Received prediction request")
+
+    with request_lock: 
+        request_times.append(start_time) 
+
     if 'file' not in request.files:
+        logger.error("No file provided in the request")
         return jsonify({'error': 'No file provided'}), 400
 
     file = request.files['file']
     img = preprocess_image(file)
     
     # Model Inference
-    with mlflow.start_run(run_id=run_id):
-        predictions = model.predict(img)
-        predicted_class = int(np.argmax(predictions, axis=1)[0])
+    try:
+        with mlflow.start_run(run_id=run_id):
+            predictions = model.predict(img)
+            predicted_class = int(np.argmax(predictions, axis=1)[0])
+            
+            # Log prediction to MLflow
+            mlflow.log_metric("prediction", predicted_class)
         
-        # Log prediction to MLflow
-        mlflow.log_metric("prediction", predicted_class)
-    
-    return jsonify({'predicted_class': predicted_class})
+        logger.info(f"Prediction made: {predicted_class}")
+    except Exception as e:
+        logger.error(f"Error during prediction: {str(e)}")
+        return jsonify({'error': 'Prediction failed'}), 500
+
+    end_time = time.time()
+    processing_time = end_time - start_time
+    logger.info(f"Prediction request processed in {processing_time:.4f} seconds")
+
+    return jsonify({
+        'predicted_class': predicted_class, 
+        'processing_time': processing_time,
+        'requests_per_minute': calculate_requests_per_minute()
+    })
+
+def calculate_requests_per_minute():
+    with request_lock:
+        if len(request_times) < 2:
+            return 0
+        time_diff = request_times[-1] - request_times[0]
+        if time_diff == 0:
+            return 0
+        return (len(request_times) - 1) / (time_diff / 60)
+
+@app.route('/metrics', methods=['GET'])
+def metrics():
+    with request_lock:
+        if request_times:
+            avg_processing_time = sum(request_times) / len(request_times)
+        else:
+            avg_processing_time = 0
+
+    return jsonify({
+        'average_processing_time': avg_processing_time,
+        'requests_per_minute': calculate_requests_per_minute(),
+        'total_requests': len(request_times)
+    })
+
+@app.route('/health', methods=['GET'])
+def health_check():
+    logger.info("Health check requested")
+    return jsonify({'status': 'healthy'}), 200
 
 if __name__ == '__main__':
+    logger.info("Starting the Flask application")
     app.run(debug=True, port=5001)  # Using port 5001 to avoid conflict with MLflow UI
