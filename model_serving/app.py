@@ -10,6 +10,7 @@ import logging
 import time 
 from collections import deque 
 from threading import Lock 
+from scipy.stats import ks_2samp
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -104,6 +105,38 @@ def preprocess_image(file):
 request_times = deque(maxlen=100)  # Store last 100 request times 
 request_lock = Lock() 
 
+BASELINE_DISTRIBUTION = None
+CURRENT_DISTRIBUTION = [0] * 10  # Assuming 10 classes for Fashion MNIST
+DRIFT_THRESHOLD = 0.1  # Adjust this value based on your needs
+DISTRIBUTION_WINDOW = 1000  # Number of predictions to consider for drift detection
+
+def update_distribution(predicted_class):
+    global CURRENT_DISTRIBUTION, BASELINE_DISTRIBUTION
+    CURRENT_DISTRIBUTION[predicted_class] += 1
+    if BASELINE_DISTRIBUTION is None and sum(CURRENT_DISTRIBUTION) >= DISTRIBUTION_WINDOW:
+        BASELINE_DISTRIBUTION = CURRENT_DISTRIBUTION.copy()
+        logger.info("Baseline distribution set")
+    elif sum(CURRENT_DISTRIBUTION) >= DISTRIBUTION_WINDOW:
+        check_for_drift()
+        CURRENT_DISTRIBUTION = [0] * 10  # Reset after checking for drift
+
+def check_for_drift():
+    global BASELINE_DISTRIBUTION, CURRENT_DISTRIBUTION
+    current_dist = np.array(CURRENT_DISTRIBUTION) / sum(CURRENT_DISTRIBUTION)
+    baseline_dist = np.array(BASELINE_DISTRIBUTION) / sum(BASELINE_DISTRIBUTION)
+    
+    # Perform Kolmogorov-Smirnov test
+    ks_statistic, p_value = ks_2samp(current_dist, baseline_dist)
+    
+    logger.info(f"Current KS statistic: {ks_statistic}")
+    
+    if ks_statistic > DRIFT_THRESHOLD:
+        logger.warning(f"Potential model drift detected. KS statistic: {ks_statistic}")
+        # Here you could trigger an alert or model retraining
+    
+    # Update BASELINE_DISTRIBUTION with a moving average
+    BASELINE_DISTRIBUTION = [0.9 * b + 0.1 * c for b, c in zip(BASELINE_DISTRIBUTION, CURRENT_DISTRIBUTION)]
+
 @app.route('/predict', methods=['POST'])
 def predict():
     start_time = time.time()
@@ -129,6 +162,10 @@ def predict():
             mlflow.log_metric("prediction", predicted_class)
         
         logger.info(f"Prediction made: {predicted_class}")
+        
+        # Update distribution for drift detection
+        update_distribution(predicted_class)
+        
     except Exception as e:
         logger.error(f"Error during prediction: {str(e)}")
         return jsonify({'error': 'Prediction failed'}), 500
@@ -170,6 +207,24 @@ def metrics():
 def health_check():
     logger.info("Health check requested")
     return jsonify({'status': 'healthy'}), 200
+
+@app.route('/drift-status', methods=['GET'])
+def drift_status():
+    global BASELINE_DISTRIBUTION, CURRENT_DISTRIBUTION
+    if BASELINE_DISTRIBUTION is None:
+        return jsonify({'status': 'Baseline not set yet'})
+    
+    current_dist = np.array(CURRENT_DISTRIBUTION) / sum(CURRENT_DISTRIBUTION)
+    baseline_dist = np.array(BASELINE_DISTRIBUTION) / sum(BASELINE_DISTRIBUTION)
+    ks_statistic, _ = ks_2samp(current_dist, baseline_dist)
+    
+    return jsonify({
+        'ks_statistic': float(ks_statistic),
+        'threshold': DRIFT_THRESHOLD,
+        'status': 'Drift detected' if ks_statistic > DRIFT_THRESHOLD else 'No drift detected',
+        'current_distribution': current_dist.tolist(),
+        'baseline_distribution': baseline_dist.tolist()
+    })
 
 if __name__ == '__main__':
     logger.info("Starting the Flask application")
