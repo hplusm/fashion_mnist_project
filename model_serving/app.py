@@ -11,6 +11,8 @@ import time
 from collections import deque 
 from threading import Lock 
 from scipy.stats import ks_2samp
+import psutil
+import threading
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -191,16 +193,11 @@ def calculate_requests_per_minute():
 
 @app.route('/metrics', methods=['GET'])
 def metrics():
-    with request_lock:
-        if request_times:
-            avg_processing_time = sum(request_times) / len(request_times)
-        else:
-            avg_processing_time = 0
-
+    global cpu_usage, memory_usage
     return jsonify({
-        'average_processing_time': avg_processing_time,
-        'requests_per_minute': calculate_requests_per_minute(),
-        'total_requests': len(request_times)
+        'cpu_usage': cpu_usage,
+        'memory_usage': memory_usage,
+        'requests_per_minute': calculate_requests_per_minute()
     })
 
 @app.route('/health', methods=['GET'])
@@ -225,6 +222,20 @@ def drift_status():
         'current_distribution': current_dist.tolist(),
         'baseline_distribution': baseline_dist.tolist()
     })
+
+# Global variables for resource monitoring
+cpu_usage = 0
+memory_usage = 0
+
+def update_resource_usage():
+    global cpu_usage, memory_usage
+    while True:
+        cpu_usage = psutil.cpu_percent(interval=1)
+        memory_usage = psutil.virtual_memory().percent
+        time.sleep(5)  # Update every 5 seconds
+
+# Start the resource monitoring thread
+threading.Thread(target=update_resource_usage, daemon=True).start()
 
 if __name__ == '__main__':
     logger.info("Starting the Flask application")

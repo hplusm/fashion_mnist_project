@@ -5,3 +5,5 @@ flask
 requests
 numpy
 mlflow
+scipy
+psutil
