@@ -69,19 +69,29 @@ Ensure you have the following installed:
 
 ## Testing the API
 
-1. **Test with `curl`**:
+1. **Test Prediction Endpoint**:
    Use `curl` to test the API with a sample image:
    ```sh
    curl -X POST -F "file=@data/processed/test/0_1.png" http://127.0.0.1:5001/predict
    ```
 
-2. **Test with Postman**:
-   - Open Postman and create a new POST request.
-   - Set the URL to `http://127.0.0.1:5001/predict`.
-   - In the **Body** tab, select **form-data**.
-   - Add a key named `file` and set the type to **File**.
-   - Choose an image file to upload.
-   - Send the request and check the response.
+2. **Check Health Endpoint**:
+   Verify the health of the application:
+   ```sh
+   curl http://127.0.0.1:5001/health
+   ```
+
+3. **Monitor Metrics**:
+   Check the current metrics of the application:
+   ```sh
+   curl http://127.0.0.1:5001/metrics
+   ```
+
+4. **Check Drift Status**:
+   Monitor the model drift status:
+   ```sh
+   curl http://127.0.0.1:5001/drift-status
+   ```
 
 ## Batch Prediction
 
@@ -106,6 +116,17 @@ Ensure you have the following installed:
    ```sh
    0 0 * * * /usr/bin/python3 /path_to_your_repo/batch_prediction/batch_predict.py
    ```
+
+## Monitoring Components
+
+The project includes several monitoring components:
+
+1. **Performance Monitoring**: Tracks requests per minute and processing time per request.
+2. **Resource Utilization**: Monitors CPU and memory usage.
+3. **Health Checks**: Provides an API endpoint for system health.
+4. **Model Drift Detection**: Compares current and baseline distributions using the Kolmogorov-Smirnov test.
+
+These components can be accessed through the `/metrics`, `/health`, and `/drift-status` endpoints.
 
 ## MLflow Integration
 
