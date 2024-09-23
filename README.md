@@ -2,6 +2,20 @@
 
 This project automates the sorting of returned items for an online shopping platform using machine learning. The system categorizes items based on their images and runs as a service that can be triggered in batches overnight.
 
+## Table of Contents
+- [Prerequisites](#prerequisites)
+- [Setup](#setup)
+- [Data Ingestion](#data-ingestion)
+- [Data Processing](#data-processing)
+- [Model Training](#model-training)
+- [Model Serving](#model-serving)
+- [Testing the API](#testing-the-api)
+- [Batch Prediction](#batch-prediction)
+- [Scheduling Batch Predictions](#scheduling-batch-predictions)
+- [Monitoring Components](#monitoring-components)
+- [MLflow Integration](#mlflow-integration)
+- [Troubleshooting](#troubleshooting)
+
 ## Prerequisites
 
 Ensure you have the following installed:
@@ -17,13 +31,18 @@ Ensure you have the following installed:
    cd fashion_mnist_project
    ```
 
-2. **Install Dependencies**:
+2. **Set Up a Virtual Environment** (optional but recommended):
+   ```sh
+   python3 -m venv venv
+   source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+   ```
+3. **Install Dependencies**:
    Install the required Python packages using pip:
    ```sh
    pip install -r requirements.txt
    ```
 
-3. **Start MLflow UI**:
+4. **Start MLflow UI**:
    Before running any scripts, start the MLflow tracking server:
    ```sh
    mlflow ui
