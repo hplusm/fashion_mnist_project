@@ -39,7 +39,7 @@ The Refund Item Classifier system is designed with the following components:
 
 Below is a visual representation of the system architecture:
 
-<img src="images/architecture_diagram.png" alt="System Architecture" width="600"/>
+<img src="architecture_diagram.png" alt="System Architecture" width="600"/>
 
 This diagram shows the flow of data and processes between different components of the system.
 
