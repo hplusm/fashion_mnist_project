@@ -24,8 +24,29 @@ The Refund Item Classifier addresses the challenge of categorizing returned item
 
 This project is designed to streamline the returns process, making it more efficient and cost-effective for the online shopping platform.
 
+## Conceptual Architecture
+
+The Refund Item Classifier system is designed with the following components:
+
+1. **Data Ingestion**: Images of returned items are uploaded to an S3 bucket.
+2. **Data Storage**: The images are stored in the S3 bucket and processed images are saved locally.
+3. **Data Processing**: Images are downloaded from S3, converted to a standard format, and preprocessed for model training.
+4. **Model Training**: A machine learning model is trained on the processed images and logged to MLflow.
+5. **Model Serving**: The trained model is served using a Flask API, which handles prediction requests.
+6. **Batch Processing**: The system performs batch predictions on new data every night using a scheduled job.
+7. **Monitoring and Logging**: MLflow is used for tracking experiments, managing models, and logging metrics. Resource utilization and model drift are monitored continuously.
+
+### Visual Overview
+
+Below is a visual representation of the system architecture:
+
+![System Architecture](path_to_your_architecture_diagram.png)
+
+This diagram shows the flow of data and processes between different components of the system.
+
 ## Table of Contents
 - [Project Overview](#project-overview)
+- [Conceptual Architecture](#conceptual-architecture)
 - [Prerequisites](#prerequisites)
 - [Setup](#setup)
 - [Data Ingestion](#data-ingestion)
