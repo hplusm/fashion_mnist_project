@@ -8,16 +8,14 @@ This project automates the sorting of returned items for an online shopping plat
 
 ## Project Overview
 
-The Refund Item Classifier addresses the challenge of categorizing returned items for a rapidly growing online shopping platform for sustainable products. As the volume of returns increases, the need for manual sorting has become unsustainable. This project aims to automate the classification of refund items using machine learning, reducing the workforce and associated costs.
+The Refund Item Classifier addresses the challenge of categorizing returned items for a rapidly growing online shopping platform for sustainable products. This project aims to automate the classification of refund items using machine learning, reducing the workforce and associated costs.
 
 ### Key Features
 
 - **Automated Image Classification**: Utilizes a machine learning model to classify returned items based on their images.
-- **Batch Processing**: Runs as a batch service, processing new data overnight to ensure timely categorization.
+- **Batch Processing**: Runs as a batch service, processing new data overnight.
 - **RESTful API**: Provides endpoints for real-time predictions, system health checks, performance metrics, and model drift detection.
 - **Monitoring and Logging**: Integrates with MLflow for tracking experiments, managing models, and logging metrics.
-- **Resource Utilization Monitoring**: Tracks CPU and memory usage to ensure efficient resource management.
-- **Model Drift Detection**: Monitors the model's performance over time and detects significant deviations from the baseline distribution.
 
 ### Benefits
 
@@ -26,8 +24,6 @@ The Refund Item Classifier addresses the challenge of categorizing returned item
 - **Real-Time Monitoring**: Provides real-time insights into system performance and health, ensuring smooth operation and quick issue resolution.
 - **Adaptability**: Detects model drift and allows for timely retraining, ensuring the model remains accurate and reliable over time.
 
-This project is designed to streamline the returns process, making it more efficient and cost-effective for the online shopping platform.
-
 ## Conceptual Architecture
 
 The Refund Item Classifier system is designed with the following components:
@@ -35,21 +31,19 @@ The Refund Item Classifier system is designed with the following components:
 1. **Data Ingestion**: Images of returned items are uploaded to an S3 bucket.
 2. **Data Processing**: Images are downloaded from S3, converted to a standard format, and preprocessed for model training.
 3. **Model Training**: A machine learning model is trained on the processed images using TensorFlow/Keras and logged to MLflow.
-4. **Model Serving**: The trained model is served using a Flask RESTful API, which handles prediction requests.
+4. **Model Serving**: The trained model is served using a Flask RESTful API.
 5. **Batch Processing**: The system performs batch predictions on new data every night using a scheduled job.
 6. **Monitoring and Logging**: MLflow is used for tracking experiments, managing models, and logging metrics.
 
 ### Data Source
 
-The dataset used for training the model is sourced from [Kaggle's Fashion MNIST dataset](https://www.kaggle.com/zalando-research/fashionmnist). This dataset contains 70,000 grayscale images of 10 categories of clothing items, which are used to train and evaluate the model.
+The dataset used for training the model is sourced from [Kaggle's Fashion MNIST dataset](https://www.kaggle.com/zalando-research/fashionmnist).
 
 ### Visual Overview
 
 Below is a visual representation of the system architecture:
 
 <img src="architecture.png" alt="System Architecture" width="599"/>
-
-This diagram shows the flow of data and processes between different components of the system.
 
 ## Table of Contents
 - [Project Overview](#project-overview)
