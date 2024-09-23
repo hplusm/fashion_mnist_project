@@ -130,7 +130,7 @@ def check_for_drift():
     # Perform Kolmogorov-Smirnov test
     ks_statistic, p_value = ks_2samp(current_dist, baseline_dist)
     
-    logger.info(f"Current KS statistic: {ks_statistic}")
+    logger.info(f"Current KS statistic: {ks_statistic}, p-value: {p_value}")
     
     if ks_statistic > DRIFT_THRESHOLD:
         logger.warning(f"Potential model drift detected. KS statistic: {ks_statistic}")
@@ -213,10 +213,11 @@ def drift_status():
     
     current_dist = np.array(CURRENT_DISTRIBUTION) / sum(CURRENT_DISTRIBUTION)
     baseline_dist = np.array(BASELINE_DISTRIBUTION) / sum(BASELINE_DISTRIBUTION)
-    ks_statistic, _ = ks_2samp(current_dist, baseline_dist)
+    ks_statistic, p_value = ks_2samp(current_dist, baseline_dist)
     
     return jsonify({
         'ks_statistic': float(ks_statistic),
+        'p_value': float(p_value),
         'threshold': DRIFT_THRESHOLD,
         'status': 'Drift detected' if ks_statistic > DRIFT_THRESHOLD else 'No drift detected',
         'current_distribution': current_dist.tolist(),
