@@ -1,5 +1,12 @@
 # Refund Item Classifier
 
+![Build Status](https://img.shields.io/github/actions/workflow/status/hplusm/fashion_mnist_project/ci.yml)
+![License](https://img.shields.io/github/license/hplusm/fashion_mnist_project)
+![Dependencies](https://img.shields.io/depfu/hplusm/fashion_mnist_project)
+![Python Version](https://img.shields.io/badge/python-3.x-blue)
+![Code Coverage](https://img.shields.io/codecov/c/github/hplusm/fashion_mnist_project)
+![MLflow](https://img.shields.io/badge/MLflow-integrated-brightgreen)
+
 This project automates the sorting of returned items for an online shopping platform using machine learning. The system categorizes items based on their images and runs as a service that can be triggered in batches overnight.
 
 ## Project Overview
