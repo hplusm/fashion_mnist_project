@@ -35,6 +35,10 @@ The Refund Item Classifier system is designed with the following components:
 5. **Batch Processing**: The system performs batch predictions on new data every night using a scheduled job.
 6. **Monitoring and Logging**: MLflow is used for tracking experiments, managing models, and logging metrics.
 
+## Data Source
+
+The dataset used for training the model is sourced from [Kaggle's Fashion MNIST dataset](https://www.kaggle.com/zalando-research/fashionmnist). This dataset contains 70,000 grayscale images of 10 categories of clothing items, which are used to train and evaluate the model.
+
 ### Visual Overview
 
 Below is a visual representation of the system architecture:
