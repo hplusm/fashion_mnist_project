@@ -3,6 +3,7 @@
 This project automates the sorting of returned items for an online shopping platform using machine learning. The system categorizes items based on their images and runs as a service that can be triggered in batches overnight.
 
 ## Table of Contents
+- [Project Overview](#project-overview)
 - [Prerequisites](#prerequisites)
 - [Setup](#setup)
 - [Data Ingestion](#data-ingestion)
@@ -15,6 +16,7 @@ This project automates the sorting of returned items for an online shopping plat
 - [Monitoring Components](#monitoring-components)
 - [MLflow Integration](#mlflow-integration)
 - [Troubleshooting](#troubleshooting)
+- [License](#license)
 
 ## Prerequisites
 
@@ -22,6 +24,17 @@ Ensure you have the following installed:
 - Python 3.x
 - pip (Python package installer)
 - AWS CLI (for S3 access)
+
+### Installing AWS CLI
+
+To install the AWS CLI, follow the instructions [here](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html).
+
+### Configuring AWS CLI
+
+After installing the AWS CLI, configure it with your credentials:
+```sh
+aws configure
+```
 
 ## Setup
 
@@ -166,3 +179,7 @@ If you encounter any issues:
 4. If the Flask API fails to start, ensure no other process is using port 5001.
 
 For more detailed information about each script, refer to the comments within the code files.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
