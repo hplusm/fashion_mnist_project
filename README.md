@@ -38,6 +38,7 @@ This project is designed to streamline the returns process, making it more effic
 - [Monitoring Components](#monitoring-components)
 - [MLflow Integration](#mlflow-integration)
 - [Troubleshooting](#troubleshooting)
+- [Contributing](#contributing)
 - [License](#license)
 
 ## Prerequisites
@@ -201,6 +202,18 @@ If you encounter any issues:
 4. If the Flask API fails to start, ensure no other process is using port 5001.
 
 For more detailed information about each script, refer to the comments within the code files.
+
+## Contributing
+
+We welcome contributions to the Refund Item Classifier! If you would like to contribute, please follow these guidelines:
+
+1. Fork the repository.
+2. Create a new branch for your feature or bugfix.
+3. Make your changes and commit them with clear and concise messages.
+4. Push your changes to your fork.
+5. Submit a pull request to the main repository.
+
+Please ensure that your contributions adhere to the project's coding standards and include appropriate tests.
 
 ## License
 
