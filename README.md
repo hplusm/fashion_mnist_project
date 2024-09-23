@@ -29,18 +29,17 @@ This project is designed to streamline the returns process, making it more effic
 The Refund Item Classifier system is designed with the following components:
 
 1. **Data Ingestion**: Images of returned items are uploaded to an S3 bucket.
-2. **Data Storage**: The images are stored in the S3 bucket and processed images are saved locally.
-3. **Data Processing**: Images are downloaded from S3, converted to a standard format, and preprocessed for model training.
-4. **Model Training**: A machine learning model is trained on the processed images and logged to MLflow.
-5. **Model Serving**: The trained model is served using a Flask API, which handles prediction requests.
-6. **Batch Processing**: The system performs batch predictions on new data every night using a scheduled job.
-7. **Monitoring and Logging**: MLflow is used for tracking experiments, managing models, and logging metrics. Resource utilization and model drift are monitored continuously.
+2. **Data Processing**: Images are downloaded from S3, converted to a standard format, and preprocessed for model training.
+3. **Model Training**: A machine learning model is trained on the processed images using TensorFlow/Keras and logged to MLflow.
+4. **Model Serving**: The trained model is served using a Flask RESTful API, which handles prediction requests.
+5. **Batch Processing**: The system performs batch predictions on new data every night using a scheduled job.
+6. **Monitoring and Logging**: MLflow is used for tracking experiments, managing models, and logging metrics.
 
 ### Visual Overview
 
 Below is a visual representation of the system architecture:
 
-![System Architecture](architecture_diagram.png)
+<img src="images/architecture_diagram.png" alt="System Architecture" width="600"/>
 
 This diagram shows the flow of data and processes between different components of the system.
 
