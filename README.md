@@ -86,7 +86,7 @@ aws configure
 1. **Clone the Repository**:
    ```sh
    git clone <repository_url>
-   cd fashion_mnist_project
+   cd refundclassifier
    ```
 
 2. **Set Up a Virtual Environment** (optional but recommended):
