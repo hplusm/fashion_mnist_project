@@ -149,7 +149,7 @@ aws configure
 1. **Test Prediction Endpoint**:
    Use `curl` to test the API with a sample image:
    ```sh
-   curl -X POST -F "file=@data/processed/test/0_1.png" http://127.0.0.1:5001/predict
+   curl -X POST -F "file=@data/processed/test/0_19.png" http://127.0.0.1:5001/predict
    ```
 
 2. **Check Health Endpoint**:
