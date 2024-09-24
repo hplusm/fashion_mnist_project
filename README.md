@@ -187,37 +187,45 @@ aws configure
    ```
 
 4. **Check Drift Status**:
-   Monitor the model drift status:
+   Monitor the model drift status by making a request to the `/drift-status` endpoint:
    ```sh
    curl http://127.0.0.1:5001/drift-status
    ```
-   Example response before running 1000 predictions:
+   
+   **Example response before running 1000 predictions:**
    ```json
    {
      "status": "Baseline not set yet"
    }
    ```
 
-   Example response after running 1000 predictions:
+   **Example response after running 1000 predictions:**
+
+   First, run 500 predictions with an image from category 0:
    ```sh
    for i in {1..500}; do
        curl -X POST -F "file=@data/processed/test/0_19.png" http://127.0.0.1:5001/predict
    done
    ```
+
+   Then, run 500 predictions with an image from category 1:
    ```sh
    for i in {1..500}; do                 
        curl -X POST -F "file=@data/processed/test/1_6000.png" http://127.0.0.1:5001/predict
    done
    ```
+
+   Finally, check the drift status again:
    ```sh
    curl http://127.0.0.1:5001/drift-status
    ```
+
+   **Example response:**
    ```json
    {
      "baseline_distribution": [
        0.5,
        0.5,
-       0.0,
        0.0,
        0.0,
        0.0,
@@ -235,7 +243,6 @@ aws configure
        0.0,
        0.0,
        0.0,
-       0.0,
        0.0
      ],
      "ks_statistic": 0.0,
@@ -243,7 +250,6 @@ aws configure
      "status": "No drift detected",
      "threshold": 0.1
    }
-   ```
 
 ## Batch Prediction
 
