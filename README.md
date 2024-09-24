@@ -151,17 +151,39 @@ aws configure
    ```sh
    curl -X POST -F "file=@data/processed/test/0_19.png" http://127.0.0.1:5001/predict
    ```
+   Example response:
+   ```json
+   {
+     "predicted_class": 0,
+     "processing_time": 0.14469408988952637,
+     "requests_per_minute": 0
+   }
+   ```
 
 2. **Check Health Endpoint**:
    Verify the health of the application:
    ```sh
    curl http://127.0.0.1:5001/health
    ```
+   Example response:
+   ```json
+   {
+     "status": "healthy"
+   }
+   ```
 
 3. **Monitor Metrics**:
    Check the current metrics of the application:
    ```sh
    curl http://127.0.0.1:5001/metrics
+   ```
+   Example response:
+   ```json
+   {
+     "cpu_usage": 14.1,
+     "memory_usage": 52.0,
+     "requests_per_minute": 0
+   }
    ```
 
 4. **Check Drift Status**:
