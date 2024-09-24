@@ -191,6 +191,59 @@ aws configure
    ```sh
    curl http://127.0.0.1:5001/drift-status
    ```
+   Example response before running 1000 predictions:
+   ```json
+   {
+     "status": "Baseline not set yet"
+   }
+   ```
+
+   Example response after running 1000 predictions:
+   ```sh
+   for i in {1..500}; do
+       curl -X POST -F "file=@data/processed/test/0_19.png" http://127.0.0.1:5001/predict
+   done
+
+   for i in {1..500}; do                 
+       curl -X POST -F "file=@data/processed/test/1_6000.png" http://127.0.0.1:5001/predict
+   done
+
+   curl http://127.0.0.1:5001/drift-status
+   ```
+
+   Example response:
+   ```json
+   {
+     "baseline_distribution": [
+       0.5,
+       0.5,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+     ],
+     "current_distribution": [
+       0.5,
+       0.5,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+     ],
+     "ks_statistic": 0.0,
+     "p_value": 1.0,
+     "status": "No drift detected",
+     "threshold": 0.1
+   }
+   ```
 
 ## Batch Prediction
 
