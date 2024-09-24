@@ -203,15 +203,15 @@ aws configure
    for i in {1..500}; do
        curl -X POST -F "file=@data/processed/test/0_19.png" http://127.0.0.1:5001/predict
    done
-
+   ```
+   ```sh
    for i in {1..500}; do                 
        curl -X POST -F "file=@data/processed/test/1_6000.png" http://127.0.0.1:5001/predict
    done
-
+   ```
+   ```sh
    curl http://127.0.0.1:5001/drift-status
    ```
-
-   Example response:
    ```json
    {
      "baseline_distribution": [
