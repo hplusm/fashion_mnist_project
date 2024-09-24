@@ -151,7 +151,7 @@ aws configure
    ```sh
    curl -X POST -F "file=@data/processed/test/0_19.png" http://127.0.0.1:5001/predict
    ```
-   Example response:
+   **Example response:**
    ```json
    {
      "predicted_class": 0,
@@ -165,7 +165,7 @@ aws configure
    ```sh
    curl http://127.0.0.1:5001/health
    ```
-   Example response:
+   **Example response:**
    ```json
    {
      "status": "healthy"
@@ -177,7 +177,7 @@ aws configure
    ```sh
    curl http://127.0.0.1:5001/metrics
    ```
-   Example response:
+   **Example response:**
    ```json
    {
      "cpu_usage": 14.1,
