@@ -161,7 +161,7 @@ aws configure
    ```
 
 2. **Check Health Endpoint**:
-   Verify the health of the application:
+   Verify the health of the application by making a request to the `/health` endpoint:
    ```sh
    curl http://127.0.0.1:5001/health
    ```
@@ -173,7 +173,7 @@ aws configure
    ```
 
 3. **Monitor Metrics**:
-   Check the current metrics of the application:
+   Check the current metrics of the application by making a request to the `/metrics` endpoint:
    ```sh
    curl http://127.0.0.1:5001/metrics
    ```
