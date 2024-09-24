@@ -123,6 +123,8 @@ def update_distribution(predicted_class):
     """
     global CURRENT_DISTRIBUTION, BASELINE_DISTRIBUTION
     CURRENT_DISTRIBUTION[predicted_class] += 1
+    logger.info(f"Updated CURRENT_DISTRIBUTION: {CURRENT_DISTRIBUTION}")
+    
     if BASELINE_DISTRIBUTION is None and sum(CURRENT_DISTRIBUTION) >= DISTRIBUTION_WINDOW:
         BASELINE_DISTRIBUTION = CURRENT_DISTRIBUTION.copy()
         logger.info("Baseline distribution set")
@@ -135,6 +137,11 @@ def check_for_drift():
     Check for model drift using the Kolmogorov-Smirnov test.
     """
     global BASELINE_DISTRIBUTION, CURRENT_DISTRIBUTION
+    
+    if sum(CURRENT_DISTRIBUTION) == 0:
+        logger.warning("CURRENT_DISTRIBUTION sum is zero, skipping drift check")
+        return
+    
     current_dist = np.array(CURRENT_DISTRIBUTION) / sum(CURRENT_DISTRIBUTION)
     baseline_dist = np.array(BASELINE_DISTRIBUTION) / sum(BASELINE_DISTRIBUTION)
     
@@ -148,6 +155,7 @@ def check_for_drift():
     
     # Update BASELINE_DISTRIBUTION with a moving average
     BASELINE_DISTRIBUTION = [0.9 * b + 0.1 * c for b, c in zip(BASELINE_DISTRIBUTION, CURRENT_DISTRIBUTION)]
+    logger.info(f"Updated BASELINE_DISTRIBUTION: {BASELINE_DISTRIBUTION}")
 
 @app.route('/predict', methods=['POST'])
 def predict():
